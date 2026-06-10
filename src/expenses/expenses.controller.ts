@@ -3,13 +3,11 @@ import { ConfigService } from '@nestjs/config';
 
 @Controller('expenses')
 export class ExpensesController {
-    constructor(
-        private readonly configService: ConfigService
-    ) { }
+    constructor(private readonly configService: ConfigService) {}
 
     @Get()
-    anything(){
-        console.log(this.configService.get('MONGO_URI'))
-        return "Anything"
+    anything() {
+        console.log(this.configService.get('MONGO_URI'));
+        return 'Anything';
     }
 }
