@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ExpensesService } from './expenses/expenses.service';
-import { ExpensesModule } from './expenses/expenses.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
     imports: [
@@ -20,9 +18,8 @@ import { JwtModule } from '@nestjs/jwt';
         }),
         AuthModule,
         UsersModule,
-        ExpensesModule,
     ],
     controllers: [AppController],
-    providers: [AppService, ExpensesService],
+    providers: [AppService],
 })
 export class AppModule { }

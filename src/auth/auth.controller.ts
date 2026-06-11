@@ -1,42 +1,61 @@
-import {
-    Controller,
-    Get,
-    Post,
-    Body,
-    Patch,
-    Param,
-    Delete,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { CreateUserDTO } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/register-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { JwtService } from '@nestjs/jwt';
+import { LoginUserDTO } from './dto/login-user.dto';
+import type { Request, Response } from 'express'
+import bcrypt from 'bcrypt'
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService) {}
+    constructor(
+        private readonly authService: AuthService,
+        private readonly jwtService: JwtService
+    ) { }
 
-    @Post()
-    create(@Body() createAuthDto: CreateAuthDto) {
-        return this.authService.create(createAuthDto);
+    @Post('register')
+    async registerUser(@Body() createUserDTO: CreateUserDTO, @Res({ passthrough: true }) res: Response) {
+        const hashedPassword = await bcrypt.hash(createUserDTO.password, 10)
+        createUserDTO.password = hashedPassword
+
+        const user = await this.authService.registerUser(createUserDTO)
+        const payload = { sub: user._id }
+        const token = await this.jwtService.signAsync(payload)
+        res.cookie('access_token', token)
+
+        return {
+            data: {
+                _id: user._id,
+                fname: user.fname,
+                lname: user.lname,
+                email: user.email
+            },
+            access_token: token
+        }
     }
 
-    @Get()
-    findAll() {
-        return this.authService.findAll();
+    @Post('login')
+    async loginUser(@Body() loginUserDTO: LoginUserDTO, @Res({ passthrough: true }) res: Response) {
+        const user = await this.authService.loginUser(loginUserDTO)
+        const payload = { sub: user._id }
+        const token = await this.jwtService.signAsync(payload)
+        res.cookie('access_token', token)
+
+        return {
+            data: {
+                _id: user._id,
+                fname: user.fname,
+                lname: user.lname,
+                email: user.email
+            },
+            access_token: token
+        }
     }
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.authService.findOne(+id);
-    }
-
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-        return this.authService.update(+id, updateAuthDto);
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.authService.remove(+id);
+    @Get('profile')
+    @UseGuards(AuthGuard)
+    async getUserProfile(@Req() req: Request) {
+        return req['user']
     }
 }
