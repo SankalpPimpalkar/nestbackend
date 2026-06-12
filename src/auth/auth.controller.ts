@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -6,6 +6,7 @@ import { LoginUserDTO } from './dto/login-user.dto';
 import type { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import { AuthGuard } from './auth.guard';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -56,6 +57,26 @@ export class AuthController {
     @Get('profile')
     @UseGuards(AuthGuard)
     async getUserProfile(@Req() req: Request) {
-        return req['user']
+        return this.authService.currentUserProfile(req)
+    }
+
+    @Patch('profile')
+    @UseGuards(AuthGuard)
+    async updateUserInfo(@Body() updateUserDTO: UpdateUserDTO, @Req() req: Request) {
+        const userId = req['user']._id
+        if (updateUserDTO.password) {
+            const hashedPassword = await bcrypt.hash(updateUserDTO.password, 10)
+            updateUserDTO.password = hashedPassword
+        }
+        const updatedUser = await this.authService.updateUser(userId, updateUserDTO)
+
+        return {
+            data: {
+                _id: updatedUser._id,
+                fname: updatedUser.fname,
+                lname: updatedUser.lname,
+                email: updatedUser.email
+            }
+        }
     }
 }
