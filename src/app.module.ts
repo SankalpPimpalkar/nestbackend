@@ -6,6 +6,10 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ExpensesModule } from './expenses/expenses.module';
+import { BudgetsModule } from './budgets/budgets.module';
+import { CategoriesModule } from './categories/categories.module';
+import { IncomesModule } from './incomes/incomes.module';
 
 @Module({
     imports: [
@@ -18,6 +22,10 @@ import { UsersModule } from './users/users.module';
         }),
         AuthModule,
         UsersModule,
+        ExpensesModule,
+        BudgetsModule,
+        CategoriesModule,
+        IncomesModule,
     ],
     controllers: [AppController],
     providers: [AppService],
