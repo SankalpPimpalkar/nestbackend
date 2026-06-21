@@ -11,12 +11,10 @@ export class ExpensesService {
 
     async createExpense(
         createExpenseDTO: CreateExpenseDTO,
-        categoryId: mongoose.Types.ObjectId,
         userId: mongoose.Types.ObjectId
     ) {
         const expense = await this.expenseModel.create({
             ...createExpenseDTO,
-            category: categoryId,
             user: userId
         })
 
@@ -55,7 +53,7 @@ export class ExpensesService {
 
     async updateExpense(updateExpenseDTO: UpdateExpenseDTO, userId: mongoose.Types.ObjectId, expenseId: mongoose.Types.ObjectId) {
         const expense = await this.expenseModel
-            .findOneAndUpdate({ _id: expenseId, user: userId }, updateExpenseDTO)
+            .findOneAndUpdate({ _id: expenseId, user: userId }, updateExpenseDTO, { returnDocument: 'after' })
 
         if (!expense) {
             throw new ConflictException('Expense does not exists')
