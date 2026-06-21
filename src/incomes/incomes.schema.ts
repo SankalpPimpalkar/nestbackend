@@ -3,7 +3,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 
 export type IncomeDocument = HydratedDocument<Income>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Income {
     @Prop({ type: String, required: true })
     source!: string;
