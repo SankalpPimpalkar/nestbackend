@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schemas/user.schema';
+import { User } from './users.schema';
 import { Model } from 'mongoose';
 import { CreateUserDTO } from 'src/auth/dto/create-user.dto';
 import { UpdateUserDTO } from 'src/auth/dto/update-user.dto';

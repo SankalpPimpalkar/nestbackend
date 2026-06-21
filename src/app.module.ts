@@ -6,15 +6,13 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { ExpensesModule } from './expenses/expenses.module';
-import { BudgetsModule } from './budgets/budgets.module';
 import { CategoriesModule } from './categories/categories.module';
 import { IncomesModule } from './incomes/incomes.module';
 
 @Module({
     imports: [
         ConfigModule.forRoot({ isGlobal: true }),
-        MongooseModule.forRoot(process.env.MONGO_URI as string),
+        MongooseModule.forRoot(process.env.MONGO_URI as string, {dbName: 'nestbackend'}),
         JwtModule.register({
             global: true,
             secret: process.env.JWT_SECRET,
@@ -22,10 +20,8 @@ import { IncomesModule } from './incomes/incomes.module';
         }),
         AuthModule,
         UsersModule,
-        ExpensesModule,
-        BudgetsModule,
         CategoriesModule,
-        IncomesModule,
+        IncomesModule
     ],
     controllers: [AppController],
     providers: [AppService],
