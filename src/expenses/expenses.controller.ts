@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDTO } from './dto/create-expense.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -11,7 +11,7 @@ export class ExpensesController {
 
     @Post('')
     @UseGuards(AuthGuard)
-    async createExpense(createExpenseDTO: CreateExpenseDTO, @Req() req: Request) {
+    async createExpense(@Body() createExpenseDTO: CreateExpenseDTO, @Req() req: Request) {
         const userId = req['user']._id
         const expense = await this.expenseService.createExpense(createExpenseDTO, userId)
         return {
@@ -44,7 +44,7 @@ export class ExpensesController {
     async updateIncomeInfo(
         @Param('expenseId') expenseId: mongoose.Types.ObjectId,
         @Req() req: Request,
-        updateExpenseDTO: UpdateExpenseDTO
+        @Body() updateExpenseDTO: UpdateExpenseDTO
     ) {
         const userId = req['user']._id
         const expense = await this.expenseService.updateExpense(updateExpenseDTO, userId, expenseId)

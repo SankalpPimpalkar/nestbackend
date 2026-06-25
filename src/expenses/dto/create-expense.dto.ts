@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator"
+import { IsNotEmpty, IsNumber, IsString } from "class-validator"
 import mongoose from "mongoose"
 
 export class CreateExpenseDTO {
@@ -6,7 +6,7 @@ export class CreateExpenseDTO {
     @IsNotEmpty()
     title!: string
 
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
     amount!: number
 

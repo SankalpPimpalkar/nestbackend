@@ -12,7 +12,7 @@ export class IncomesService {
     async addUserIncome(createIncomeDTO: CreateIncomeDTO, userId: mongoose.Types.ObjectId) {
         const existingIncome = await this.incomeModel
             .findOne({ user: userId, source: createIncomeDTO.source })
-        if (!existingIncome) {
+        if (existingIncome) {
             throw new ConflictException(`You already added ${createIncomeDTO.source} as your income source`)
         }
 
@@ -26,10 +26,10 @@ export class IncomesService {
 
     async getAllUserIncomes(userId: mongoose.Types.ObjectId) {
         const incomes = await this.incomeModel
-        .find({ user: userId })
-        .select('-user -__v')
-        .lean()
-        
+            .find({ user: userId })
+            .select('-user -__v')
+            .lean()
+
         return incomes
     }
 
@@ -52,7 +52,7 @@ export class IncomesService {
         userId: mongoose.Types.ObjectId
     ) {
         const income = await this.incomeModel
-            .findOneAndUpdate({ _id: incomeId, user: userId }, updateIncomeDTO)
+            .findOneAndUpdate({ _id: incomeId, user: userId }, updateIncomeDTO, { returnDocument: 'after' })
             .select('-user -__v')
             .lean()
 

@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { IncomesService } from './incomes.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateIncomeDTO } from './dto/create-income.dto';
@@ -13,7 +13,7 @@ export class IncomesController {
 
     @Post('')
     @UseGuards(AuthGuard)
-    async addIncome(createIncomeDTO: CreateIncomeDTO, @Req() req: Request) {
+    async addIncome(@Body() createIncomeDTO: CreateIncomeDTO, @Req() req: Request) {
         const userId = req['user']._id
         const income = await this.incomeService.addUserIncome(createIncomeDTO, userId)
         return {
@@ -46,7 +46,7 @@ export class IncomesController {
     async updateIncomeInfo(
         @Param('incomeId') incomeId: mongoose.Types.ObjectId,
         @Req() req: Request,
-        updateIncomeDTO: UpdateIncomeDTO
+        @Body() updateIncomeDTO: UpdateIncomeDTO
     ) {
         const userId = req['user']._id
         const income = await this.incomeService.updateUserIncome(updateIncomeDTO, incomeId, userId)

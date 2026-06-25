@@ -10,6 +10,7 @@ export class CategoriesService {
     constructor(@InjectModel(Category.name) private categoryModel: Model<Category>) { }
 
     async createCategory(createCategoryDTO: CreateCategoryDTO, userId: string) {
+        console.log(createCategoryDTO, userId)
         const existingCategory = await this.categoryModel.findOne({
             name: createCategoryDTO.name,
             user: userId
@@ -20,7 +21,10 @@ export class CategoriesService {
         }
 
         const newCategory = await this.categoryModel
-            .create(createCategoryDTO)
+            .create({
+                name: createCategoryDTO.name,
+                user: userId
+            })
         return newCategory.toObject()
     }
 
@@ -47,7 +51,7 @@ export class CategoriesService {
 
     async updateCategoryName(categoryId: mongoose.Types.ObjectId, updateCategoryDTO: UpdateCategoryDTO, userId: mongoose.Types.ObjectId) {
         const category = await this.categoryModel
-            .findOneAndUpdate({ _id: categoryId, user: userId }, updateCategoryDTO)
+            .findOneAndUpdate({ _id: categoryId, user: userId }, updateCategoryDTO, { returnDocument: 'after' })
             .select('-user -__v')
             .lean()
 

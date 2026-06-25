@@ -46,7 +46,7 @@ export class BudgetsController {
     async updateCategory(
         @Param('budgetId') budgetId: mongoose.Types.ObjectId,
         @Req() req: Request,
-        updateBudgetDTO: UpdateBudgetDTO) {
+        @Body() updateBudgetDTO: UpdateBudgetDTO) {
         const userId = req['user']._id
         const budget = await this.budgetsService.updateBudget(budgetId, userId, updateBudgetDTO)
         return {

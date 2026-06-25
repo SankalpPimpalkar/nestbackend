@@ -52,7 +52,7 @@ export class CategoriesController {
     async updateCategory(
         @Param('categoryId') categoryId: mongoose.Types.ObjectId,
         @Req() req: Request,
-        updateCategoryDTO: UpdateCategoryDTO) {
+        @Body() updateCategoryDTO: UpdateCategoryDTO) {
         const userId = req['user']._id
         const category = await this.categoryService.updateCategoryName(categoryId, updateCategoryDTO, userId)
         return {
