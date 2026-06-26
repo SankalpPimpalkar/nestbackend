@@ -1,17 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpStatus } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ConfigService } from '@nestjs/config';
+import ResponseHandler from './utils/ResponseHandler';
 
 @Controller()
 export class AppController {
     constructor(
         private readonly appService: AppService,
-        private readonly configService: ConfigService,
-    ) {}
+    ) { }
 
-    @Get()
-    getHello(): string {
-        console.log(this.configService.get('MONGO_URI'));
-        return this.appService.getHello();
+    @Get('')
+    getHello() {
+        const message = this.appService.getHello();
+        return ResponseHandler(HttpStatus.OK, message)
     }
 }

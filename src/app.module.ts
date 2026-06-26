@@ -13,6 +13,7 @@ import { ExpensesModule } from './expenses/expenses.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './app.interceptor';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
     imports: [
@@ -33,7 +34,8 @@ import { LoggingInterceptor } from './app.interceptor';
         CategoriesModule,
         IncomesModule,
         BudgetsModule,
-        ExpensesModule
+        ExpensesModule,
+        DashboardModule
     ],
     controllers: [AppController],
     providers: [
