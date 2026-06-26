@@ -4,7 +4,9 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateCategoryDTO } from './dto/create-category.dto';
 import mongoose from 'mongoose';
 import { UpdateCategoryDTO } from './dto/update-category.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Category')
 @Controller('categories')
 export class CategoriesController {
     constructor(

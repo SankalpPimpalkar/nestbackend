@@ -12,10 +12,7 @@ async function bootstrap() {
 
     const config = new DocumentBuilder()
         .setTitle('Expense Tracker Backend')
-        .setDescription('The expense tracker backend API')
-        .setVersion('1.0')
-        .addTag('expense')
-        .addBearerAuth()
+        .addServer('http://localhost:3000', 'local')
         .build();
 
     const documentFactory = () => SwaggerModule.createDocument(app, config)

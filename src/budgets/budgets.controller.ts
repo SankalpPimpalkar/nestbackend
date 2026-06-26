@@ -4,7 +4,9 @@ import { CreateBudgetDTO } from './dto/create-budget.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import mongoose from 'mongoose';
 import { UpdateBudgetDTO } from './dto/update-budget.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Budget')
 @Controller('budgets')
 export class BudgetsController {
     constructor(

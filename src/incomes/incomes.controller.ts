@@ -4,7 +4,9 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateIncomeDTO } from './dto/create-income.dto';
 import mongoose from 'mongoose';
 import { UpdateIncomeDTO } from './dto/update-income.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Income')
 @Controller('incomes')
 export class IncomesController {
     constructor(

@@ -4,11 +4,17 @@ import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 export class CreateIncomeDTO {
     @IsString()
     @IsNotEmpty()
-    @ApiProperty()
+    @ApiProperty({
+        example: 'Salary',
+        required: true
+    })
     source!: string
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiProperty()
+    @ApiProperty({
+        example: 40000,
+        required: true
+    })
     amount!: number
 }

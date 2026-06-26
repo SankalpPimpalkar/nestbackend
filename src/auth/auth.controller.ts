@@ -7,7 +7,9 @@ import type { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import { AuthGuard } from './auth.guard';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
     constructor(

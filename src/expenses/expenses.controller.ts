@@ -4,7 +4,9 @@ import { CreateExpenseDTO } from './dto/create-expense.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import mongoose from 'mongoose';
 import { UpdateExpenseDTO } from './dto/update-expense.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Expense')
 @Controller('expenses')
 export class ExpensesController {
     constructor(private readonly expenseService: ExpensesService) { }
