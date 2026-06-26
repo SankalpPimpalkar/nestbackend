@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDTO } from './dto/create-expense.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import mongoose from 'mongoose';
 import { UpdateExpenseDTO } from './dto/update-expense.dto';
 import { ApiTags } from '@nestjs/swagger';
+import ResponseHandler from 'src/utils/ResponseHandler';
 
 @ApiTags('Expense')
 @Controller('expenses')
@@ -13,12 +14,15 @@ export class ExpensesController {
 
     @Post('')
     @UseGuards(AuthGuard)
-    async createExpense(@Body() createExpenseDTO: CreateExpenseDTO, @Req() req: Request) {
+    async createExpense(@Body(ValidationPipe) createExpenseDTO: CreateExpenseDTO, @Req() req: Request) {
         const userId = req['user']._id
         const expense = await this.expenseService.createExpense(createExpenseDTO, userId)
-        return {
-            data: expense
-        }
+
+        return ResponseHandler(
+            HttpStatus.CREATED,
+            'Expense Added',
+            expense
+        )
     }
 
     @Get('')
@@ -26,9 +30,12 @@ export class ExpensesController {
     async getAllExpenses(@Query('categoryId') categoryId: mongoose.Types.ObjectId, @Req() req: Request) {
         const userId = req['user']._id
         const expense = await this.expenseService.getAllExpenses(userId, categoryId)
-        return {
-            data: expense
-        }
+
+        return ResponseHandler(
+            HttpStatus.OK,
+            'Expenses Fetched',
+            expense
+        )
     }
 
     @Delete(':expenseId')
@@ -36,9 +43,12 @@ export class ExpensesController {
     async deleteExpense(@Param('expenseId') expenseId: mongoose.Types.ObjectId, @Req() req: Request) {
         const userId = req['user']._id
         const deletedExpense = await this.expenseService.deleteExpense(userId, expenseId)
-        return {
-            data: deletedExpense
-        }
+
+        return ResponseHandler(
+            HttpStatus.OK,
+            'Expense Deleted',
+            deletedExpense
+        )
     }
 
     @Patch(':expenseId')
@@ -46,12 +56,15 @@ export class ExpensesController {
     async updateIncomeInfo(
         @Param('expenseId') expenseId: mongoose.Types.ObjectId,
         @Req() req: Request,
-        @Body() updateExpenseDTO: UpdateExpenseDTO
+        @Body(ValidationPipe) updateExpenseDTO: UpdateExpenseDTO
     ) {
         const userId = req['user']._id
         const expense = await this.expenseService.updateExpense(updateExpenseDTO, userId, expenseId)
-        return {
-            data: expense
-        }
+
+        return ResponseHandler(
+            HttpStatus.OK,
+            'Expense Updated',
+            expense
+        )
     }
 }

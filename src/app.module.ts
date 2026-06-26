@@ -10,11 +10,19 @@ import { CategoriesModule } from './categories/categories.module';
 import { IncomesModule } from './incomes/incomes.module';
 import { BudgetsModule } from './budgets/budgets.module';
 import { ExpensesModule } from './expenses/expenses.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './app.interceptor';
 
 @Module({
     imports: [
+        ThrottlerModule.forRoot({
+            throttlers: [
+                { ttl: 60000, limit: 10 }
+            ]
+        }),
         ConfigModule.forRoot({ isGlobal: true }),
-        MongooseModule.forRoot(process.env.MONGO_URI as string, {dbName: 'nestbackend'}),
+        MongooseModule.forRoot(process.env.MONGO_URI as string, { dbName: 'nestbackend' }),
         JwtModule.register({
             global: true,
             secret: process.env.JWT_SECRET,
@@ -28,6 +36,10 @@ import { ExpensesModule } from './expenses/expenses.module';
         ExpensesModule
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        { provide: APP_GUARD, useClass: ThrottlerGuard },
+        { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
+    ],
 })
 export class AppModule { }

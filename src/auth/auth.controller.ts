@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Patch, Post, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt'
 import { AuthGuard } from './auth.guard';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
+import ResponseHandler from 'src/utils/ResponseHandler';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -18,7 +19,7 @@ export class AuthController {
     ) { }
 
     @Post('register')
-    async registerUser(@Body() createUserDTO: CreateUserDTO, @Res({ passthrough: true }) res: Response) {
+    async registerUser(@Body(ValidationPipe) createUserDTO: CreateUserDTO, @Res({ passthrough: true }) res: Response) {
         const hashedPassword = await bcrypt.hash(createUserDTO.password, 10)
         createUserDTO.password = hashedPassword
 
@@ -27,44 +28,54 @@ export class AuthController {
         const token = await this.jwtService.signAsync(payload)
         res.cookie('access_token', token)
 
-        return {
-            data: {
+        return ResponseHandler(
+            HttpStatus.CREATED,
+            'User Created',
+            {
                 _id: user._id,
                 fname: user.fname,
                 lname: user.lname,
-                email: user.email
+                email: user.email,
+                access_token: token
             },
-            access_token: token
-        }
+        )
     }
 
     @Post('login')
-    async loginUser(@Body() loginUserDTO: LoginUserDTO, @Res({ passthrough: true }) res: Response) {
+    async loginUser(@Body(ValidationPipe) loginUserDTO: LoginUserDTO, @Res({ passthrough: true }) res: Response) {
         const user = await this.authService.loginUser(loginUserDTO)
         const payload = { sub: user._id }
         const token = await this.jwtService.signAsync(payload)
         res.cookie('access_token', token)
 
-        return {
-            data: {
+        return ResponseHandler(
+            HttpStatus.OK,
+            'User Logged In',
+            {
                 _id: user._id,
                 fname: user.fname,
                 lname: user.lname,
-                email: user.email
+                email: user.email,
+                access_token: token
             },
-            access_token: token
-        }
+        )
     }
 
     @Get('profile')
     @UseGuards(AuthGuard)
     async getUserProfile(@Req() req: Request) {
-        return this.authService.currentUserProfile(req)
+        const userData = await this.authService.currentUserProfile(req)
+
+        return ResponseHandler(
+            HttpStatus.OK,
+            'User Profile Fetched',
+            userData
+        )
     }
 
     @Patch('profile')
     @UseGuards(AuthGuard)
-    async updateUserInfo(@Body() updateUserDTO: UpdateUserDTO, @Req() req: Request) {
+    async updateUserInfo(@Body(ValidationPipe) updateUserDTO: UpdateUserDTO, @Req() req: Request) {
         const userId = req['user']._id
         if (updateUserDTO.password) {
             const hashedPassword = await bcrypt.hash(updateUserDTO.password, 10)
@@ -72,13 +83,10 @@ export class AuthController {
         }
         const updatedUser = await this.authService.updateUser(userId, updateUserDTO)
 
-        return {
-            data: {
-                _id: updatedUser._id,
-                fname: updatedUser.fname,
-                lname: updatedUser.lname,
-                email: updatedUser.email
-            }
-        }
+        return ResponseHandler(
+            HttpStatus.OK,
+            'User Details Updated',
+            updatedUser
+        )
     }
 }

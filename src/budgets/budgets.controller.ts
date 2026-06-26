@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { BudgetsService } from './budgets.service';
 import { CreateBudgetDTO } from './dto/create-budget.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import mongoose from 'mongoose';
 import { UpdateBudgetDTO } from './dto/update-budget.dto';
 import { ApiTags } from '@nestjs/swagger';
+import ResponseHandler from 'src/utils/ResponseHandler';
 
 @ApiTags('Budget')
 @Controller('budgets')
@@ -15,12 +16,15 @@ export class BudgetsController {
 
     @Post('')
     @UseGuards(AuthGuard)
-    async createBudget(@Body() createBudgetDTO: CreateBudgetDTO, @Req() req: Request) {
+    async createBudget(@Body(ValidationPipe) createBudgetDTO: CreateBudgetDTO, @Req() req: Request) {
         const userId = req['user']._id
         const budget = await this.budgetsService.addBudget(createBudgetDTO, userId)
-        return {
-            data: budget
-        }
+
+        return ResponseHandler(
+            HttpStatus.CREATED,
+            'Budget Added',
+            budget
+        )
     }
 
     @Get('')
@@ -28,9 +32,12 @@ export class BudgetsController {
     async getAllUserBudgets(@Req() req: Request) {
         const userId = req['user']._id
         const budgets = await this.budgetsService.getUserBudgets(userId)
-        return {
-            data: budgets
-        }
+
+        return ResponseHandler(
+            HttpStatus.OK,
+            'User Budgets Fetched',
+            budgets
+        )
     }
 
     @Delete(':budgetId')
@@ -38,9 +45,12 @@ export class BudgetsController {
     async deleteCategory(@Param('budgetId') budgetId: mongoose.Types.ObjectId, @Req() req: Request) {
         const userId = req['user']._id
         const deletedBudget = await this.budgetsService.removeBudget(budgetId, userId)
-        return {
-            data: deletedBudget
-        }
+
+        return ResponseHandler(
+            HttpStatus.OK,
+            'Budget Deleted',
+            deletedBudget
+        )
     }
 
     @Patch(':budgetId')
@@ -48,11 +58,14 @@ export class BudgetsController {
     async updateCategory(
         @Param('budgetId') budgetId: mongoose.Types.ObjectId,
         @Req() req: Request,
-        @Body() updateBudgetDTO: UpdateBudgetDTO) {
+        @Body(ValidationPipe) updateBudgetDTO: UpdateBudgetDTO) {
         const userId = req['user']._id
         const budget = await this.budgetsService.updateBudget(budgetId, userId, updateBudgetDTO)
-        return {
-            data: budget
-        }
+
+        return ResponseHandler(
+            HttpStatus.OK,
+            'Budget Updated',
+            budget
+        )
     }
 }
