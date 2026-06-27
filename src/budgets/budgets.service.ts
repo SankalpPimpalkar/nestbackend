@@ -54,6 +54,15 @@ export class BudgetsService {
         userId: mongoose.Types.ObjectId,
         updateBudgetDTO: UpdateBudgetDTO
     ) {
+        if (updateBudgetDTO.category) {
+            const existingBudget = await this.budgetModel
+                .findOne({ category: updateBudgetDTO.category, user: userId })
+                .populate<{ category: Category }>('category')
+            if (existingBudget) {
+                throw new ConflictException(`Budget for ${existingBudget.category.name} category already exists`)
+            }
+        }
+
         const budget = await this.budgetModel
             .findOneAndUpdate({ _id: budgetId, user: userId }, updateBudgetDTO, { returnDocument: 'after' })
             .select('-user -__v')

@@ -16,3 +16,4 @@ export class Budget {
 }
 
 export const BudgetSchema = SchemaFactory.createForClass(Budget);
+BudgetSchema.index({ user: 1, category: 1 }, { unique: true })
