@@ -1,98 +1,70 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Personal Finance Tracker API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Introduction
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Personal Finance Tracker API is a backend application built with NestJS and MongoDB that helps users manage their personal finances efficiently. The system allows users to track incomes, expenses, budgets, and categories while providing analytical insights through a dedicated dashboard module.
 
-## Description
+The project focuses on clean API design, scalable architecture, secure authentication, and efficient financial reporting using MongoDB Aggregation Pipelines.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Architecture
 
-```bash
-$ pnpm install
-```
+The application follows a **Modular Monolith Architecture** with a **Domain-Driven Design** approach. Features are grouped into independent business domains while remaining part of a single deployable NestJS application.
 
-## Compile and run the project
+![Architecture Diagram](./assets/architecture.png)
 
-```bash
-# development
-$ pnpm run start
+### Feature Domains
 
-# watch mode
-$ pnpm run start:dev
+![Domain Diagram](./assets/domains.png)
 
-# production mode
-$ pnpm run start:prod
-```
+#### Identity Domain
 
-## Run tests
+Responsible for user authentication and account management.
 
-```bash
-# unit tests
-$ pnpm run test
+* Auth
+* Users
 
-# e2e tests
-$ pnpm run test:e2e
+#### Finance Domain
 
-# test coverage
-$ pnpm run test:cov
-```
+Responsible for all financial operations.
 
-## Deployment
+* Incomes
+* Expenses
+* Budgets
+* Categories
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+#### Analytics Domain
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Responsible for generating insights and reports from financial data.
 
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
+* Dashboard
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Request Flow
 
-## Resources
+Client → API Gateway → Rate Limiter → Auth Guard → Domain Modules → MongoDB
 
-Check out a few resources that may come in handy when working with NestJS:
+This architecture provides clear separation of concerns, maintainability, and the ability to scale individual domains as the application grows.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## Tech Stack
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Technology      | Purpose                        |
+| --------------- | ------------------------------ |
+| NestJS          | Backend Framework              |
+| TypeScript      | Type Safety & Maintainability  |
+| MongoDB         | Primary Database               |
+| Mongoose        | ODM for MongoDB                |
+| JWT             | Authentication & Authorization |
+| Swagger         | API Documentation              |
+| Class Validator | Request Validation             |
+| Rate Limiter    | API Protection & Security      |
 
-## Stay in touch
+### Why MongoDB?
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+MongoDB provides a flexible document-based database structure and a powerful Aggregation Framework, making it well-suited for financial reporting, dashboard analytics, filtering, and search operations.
 
-## License
+### Why JWT?
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+JWT enables secure and stateless authentication, allowing protected routes to verify user identity without maintaining server-side sessions.

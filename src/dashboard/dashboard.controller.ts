@@ -2,6 +2,7 @@ import { Controller, Get, HttpStatus, Query, Req, UseGuards } from '@nestjs/comm
 import { DashboardService } from './dashboard.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import ResponseHandler from 'src/utils/ResponseHandler';
+import { GetDashboardQueryDTO } from './dto/get-dashboard.dto';
 
 @Controller('dashboard')
 export class DashboardController {
@@ -13,8 +14,7 @@ export class DashboardController {
     @UseGuards(AuthGuard)
     async getDashboardData(
         @Req() req: Request,
-        @Query('from') from: Date,
-        @Query('to') to: Date
+        @Query() { from, to }: GetDashboardQueryDTO
     ) {
         const userId = req['user']._id
         const res = await this.dashboardService.getDashboardData(userId, from, to)

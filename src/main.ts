@@ -8,7 +8,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.setGlobalPrefix('api', { 'exclude': [{ path: '/', method: RequestMethod.GET }] })
     app.use(cookieParser());
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
     const config = new DocumentBuilder()
         .setTitle('Expense Tracker Backend')

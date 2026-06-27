@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import { UpdateExpenseDTO } from './dto/update-expense.dto';
 import { ApiTags } from '@nestjs/swagger';
 import ResponseHandler from 'src/utils/ResponseHandler';
+import { GetExpensesQueryDTO } from './dto/get-expense.dto';
 
 @ApiTags('Expense')
 @Controller('expenses')
@@ -28,12 +29,7 @@ export class ExpensesController {
     @Get('')
     @UseGuards(AuthGuard)
     async getAllExpenses(
-        @Query('search') search: string,
-        @Query('category') category: string,
-        @Query('limit', ParseIntPipe) limit: number,
-        @Query('page', ParseIntPipe) page: number,
-        @Query('from', new ParseDatePipe({ optional: true })) from: Date,
-        @Query('to', new ParseDatePipe({ optional: true })) to: Date,
+        @Query() { search, category, limit, page, from, to }: GetExpensesQueryDTO,
         @Req() req: Request
     ) {
         const userId = req['user']._id
