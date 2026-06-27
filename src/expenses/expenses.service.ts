@@ -23,17 +23,79 @@ export class ExpensesService {
 
     async getAllExpenses(
         userId: mongoose.Types.ObjectId,
-        categoryId?: mongoose.Types.ObjectId,
+        page: number = 1,
+        limit: number = 10,
+        category: string = "",
+        search: string = "",
+        from?: Date,
+        to?: Date
     ) {
-        const expenses = await this.expenseModel
-            .find({
-                user: userId,
-                ...(categoryId && { category: categoryId }),
-            })
-            .select('-user -__v')
-            .populate('category', '_id name')
-            .lean()
+        const filters: any = {};
+        const datefilter: any = {};
+        const expenseMatch: any = { user: userId }
 
+        if (from) {
+            datefilter.$gte = new Date(from);
+        }
+
+        if (to) {
+            const toDate = new Date(to);
+            toDate.setHours(23, 59, 59, 999);
+            datefilter.$lte = toDate;
+        }
+
+        if (Object.keys(datefilter).length) {
+            expenseMatch.createdAt = datefilter;
+        }
+
+        if (category) {
+            filters["category.name"] = {
+                $regex: category,
+                $options: "i"
+            };
+        }
+
+        if (search) {
+            filters["title"] = {
+                $regex: search,
+                $options: "i"
+            };
+        }
+
+        const expenses = await this.expenseModel.aggregate([
+            { $match: expenseMatch },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: 'category',
+                    foreignField: '_id',
+                    as: 'category'
+                }
+            },
+            { $unwind: '$category' },
+            {
+                $match: filters
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            },
+            {
+                $skip: (page - 1) * 10
+            },
+            {
+                $limit: limit
+            },
+            {
+                $project: {
+                    _id: 1,
+                    title: 1,
+                    amount: 1,
+                    categoryName: "$category.name"
+                }
+            }
+        ])
         return expenses
     }
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, ParseDatePipe, ParseIntPipe, Patch, Post, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDTO } from './dto/create-expense.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -27,9 +27,17 @@ export class ExpensesController {
 
     @Get('')
     @UseGuards(AuthGuard)
-    async getAllExpenses(@Query('categoryId') categoryId: mongoose.Types.ObjectId, @Req() req: Request) {
+    async getAllExpenses(
+        @Query('search') search: string,
+        @Query('category') category: string,
+        @Query('limit', ParseIntPipe) limit: number,
+        @Query('page', ParseIntPipe) page: number,
+        @Query('from', new ParseDatePipe({ optional: true })) from: Date,
+        @Query('to', new ParseDatePipe({ optional: true })) to: Date,
+        @Req() req: Request
+    ) {
         const userId = req['user']._id
-        const expense = await this.expenseService.getAllExpenses(userId, categoryId)
+        const expense = await this.expenseService.getAllExpenses(userId, page, limit, category, search, from, to)
 
         return ResponseHandler(
             HttpStatus.OK,

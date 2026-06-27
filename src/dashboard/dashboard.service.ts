@@ -159,6 +159,9 @@ export class DashboardService {
                 }
             },
             {
+                $limit: 5
+            },
+            {
                 $project: {
                     _id: 0,
                     category: {
