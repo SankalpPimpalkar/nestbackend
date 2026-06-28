@@ -27,7 +27,7 @@ export class SavingsService {
     }
 
     async getAllSavings(userId: mongoose.Types.ObjectId) {
-        const res = await this.savingModel.aggregate([
+        const savings = await this.savingModel.aggregate([
             { $match: { user: userId } },
             {
                 $lookup: {
@@ -150,7 +150,7 @@ export class SavingsService {
                 }
             }
         ])
-        return res
+        return savings
     }
 
     async updateSaving(

@@ -31,7 +31,7 @@ export class SavingsController {
     ) {
         const userId = req['user']._id
         const saving = await this.savingsService.getAllSavings(userId)
-        return ResponseHandler(HttpStatus.CREATED, 'All Savings Fetched', saving)
+        return ResponseHandler(HttpStatus.OK, 'Savings Data Fetched', saving)
     }
 
     @Delete(':savingsId')
