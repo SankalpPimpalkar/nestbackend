@@ -12,8 +12,9 @@ import { BudgetsModule } from './budgets/budgets.module';
 import { ExpensesModule } from './expenses/expenses.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggingInterceptor } from './app.interceptor';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { SavingsModule } from './savings/savings.module';
 
 @Module({
     imports: [
@@ -35,7 +36,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
         IncomesModule,
         BudgetsModule,
         ExpensesModule,
-        DashboardModule
+        DashboardModule,
+        SavingsModule
     ],
     controllers: [AppController],
     providers: [

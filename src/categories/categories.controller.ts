@@ -5,7 +5,7 @@ import { CreateCategoryDTO } from './dto/create-category.dto';
 import mongoose from 'mongoose';
 import { UpdateCategoryDTO } from './dto/update-category.dto';
 import { ApiTags } from '@nestjs/swagger';
-import ResponseHandler from 'src/utils/ResponseHandler';
+import ResponseHandler from 'src/common/utils/ResponseHandler';
 
 @ApiTags('Category')
 @Controller('categories')

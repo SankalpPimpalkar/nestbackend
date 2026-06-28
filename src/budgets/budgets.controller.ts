@@ -5,7 +5,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import mongoose from 'mongoose';
 import { UpdateBudgetDTO } from './dto/update-budget.dto';
 import { ApiTags } from '@nestjs/swagger';
-import ResponseHandler from 'src/utils/ResponseHandler';
+import ResponseHandler from 'src/common/utils/ResponseHandler';
 
 @ApiTags('Budget')
 @Controller('budgets')

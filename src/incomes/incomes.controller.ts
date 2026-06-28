@@ -5,7 +5,7 @@ import { CreateIncomeDTO } from './dto/create-income.dto';
 import mongoose from 'mongoose';
 import { UpdateIncomeDTO } from './dto/update-income.dto';
 import { ApiTags } from '@nestjs/swagger';
-import ResponseHandler from 'src/utils/ResponseHandler';
+import ResponseHandler from 'src/common/utils/ResponseHandler';
 
 @ApiTags('Income')
 @Controller('incomes')

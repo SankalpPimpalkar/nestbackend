@@ -8,7 +8,7 @@ import bcrypt from 'bcrypt'
 import { AuthGuard } from './auth.guard';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
-import ResponseHandler from 'src/utils/ResponseHandler';
+import ResponseHandler from 'src/common/utils/ResponseHandler';
 
 @ApiTags('Auth')
 @Controller('auth')

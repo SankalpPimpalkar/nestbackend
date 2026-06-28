@@ -1,7 +1,7 @@
 import { Controller, Get, HttpStatus, Query, Req, UseGuards } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import ResponseHandler from 'src/utils/ResponseHandler';
+import ResponseHandler from 'src/common/utils/ResponseHandler';
 import { GetDashboardQueryDTO } from './dto/get-dashboard.dto';
 
 @Controller('dashboard')
