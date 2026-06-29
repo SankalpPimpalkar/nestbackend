@@ -15,7 +15,7 @@ export class Saving {
     goal!: number;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-    user!: mongoose.Types.ObjectId
+    user!: mongoose.Types.ObjectId;
 }
 
 export const SavingSchema = SchemaFactory.createForClass(Saving);

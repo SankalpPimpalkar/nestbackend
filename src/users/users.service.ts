@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './users.schema';
 import { Model } from 'mongoose';
@@ -7,7 +11,7 @@ import { UpdateUserDTO } from 'src/auth/dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectModel(User.name) private userModel: Model<User>) { }
+    constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
     async createUser(createUserDTO: CreateUserDTO) {
         const existingUser = await this.userModel.findOne({
@@ -25,26 +29,28 @@ export class UsersService {
     }
 
     async getUserByEmail(email: string) {
-        const user = await this.userModel.findOne({ email })
+        const user = await this.userModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('User not found')
+            throw new NotFoundException('User not found');
         }
         return user.toObject();
     }
 
     async getUserById(id: string) {
-        const user = await this.userModel.findById(id)
+        const user = await this.userModel.findById(id);
         if (!user) {
-            throw new NotFoundException('User not found')
+            throw new NotFoundException('User not found');
         }
         return user.toObject();
     }
 
     async updateUserInfo(id: string, updateUserDTO: UpdateUserDTO) {
-        const user = await this.userModel.findByIdAndUpdate(id, updateUserDTO, { returnDocument: 'after' })
+        const user = await this.userModel.findByIdAndUpdate(id, updateUserDTO, {
+            returnDocument: 'after',
+        });
         if (!user) {
-            throw new NotFoundException('User not found')
+            throw new NotFoundException('User not found');
         }
-        return user.toObject()
+        return user.toObject();
     }
 }

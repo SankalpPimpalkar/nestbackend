@@ -1,39 +1,47 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    CanActivate,
+    ExecutionContext,
+    Injectable,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+    constructor(
+        private readonly jwtService: JwtService,
+        private readonly userService: UsersService,
+    ) { }
 
-  constructor(
-    private readonly jwtService: JwtService,
-    private readonly userService: UsersService
-  ) { }
-
-  async canActivate(
-    context: ExecutionContext,
-  ): Promise<boolean> {
-    const request: Request = context.switchToHttp().getRequest()
-    const token = request.cookies['access_token']
-
-    if (!token) {
-      throw new UnauthorizedException('Token not found')
+    private extractTokenFromHeader(request: Request): string | undefined {
+        const [type, token] = request.headers.authorization?.split(' ') ?? [];
+        return type === 'Bearer' ? token : undefined;
     }
 
-    const decodedToken = await this.jwtService.verifyAsync(token)
-    if (!decodedToken) {
-      throw new UnauthorizedException('Invalid Token')
-    }
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+        const request: Request = context.switchToHttp().getRequest();
+        const token = request.cookies['access_token'] || this.extractTokenFromHeader(request)
 
-    const user = await this.userService.getUserById(decodedToken.sub)
-    request['user'] = {
-      _id: user._id,
-      fname: user.fname,
-      lname: user.lname,
-      email: user.email
-    }
+        if (!token) {
+            throw new UnauthorizedException('Token not found');
+        }
+        try {
+            const decodedToken = await this.jwtService.verifyAsync(token);
 
-    return true
-  }
+            const user = await this.userService.getUserById(decodedToken.sub);
+            request['user'] = {
+                _id: user._id,
+                fname: user.fname,
+                lname: user.lname,
+                email: user.email,
+            };
+        } catch (error) {
+            throw new UnauthorizedException(
+                'Cookie Expired. Please Login Again',
+            );
+        }
+        return true;
+    }
 }

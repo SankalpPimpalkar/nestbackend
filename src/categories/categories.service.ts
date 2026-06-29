@@ -7,58 +7,69 @@ import { UpdateCategoryDTO } from './dto/update-category.dto';
 
 @Injectable()
 export class CategoriesService {
-    constructor(@InjectModel(Category.name) private categoryModel: Model<Category>) { }
+    constructor(
+        @InjectModel(Category.name) private categoryModel: Model<Category>,
+    ) {}
 
     async createCategory(createCategoryDTO: CreateCategoryDTO, userId: string) {
-        console.log(createCategoryDTO, userId)
+        console.log(createCategoryDTO, userId);
         const existingCategory = await this.categoryModel.findOne({
             name: createCategoryDTO.name,
-            user: userId
-        })
+            user: userId,
+        });
 
         if (existingCategory) {
-            throw new ConflictException(`Category ${existingCategory.name} already exists`)
+            throw new ConflictException(
+                `Category ${existingCategory.name} already exists`,
+            );
         }
 
-        const newCategory = await this.categoryModel
-            .create({
-                name: createCategoryDTO.name,
-                user: userId
-            })
-        return newCategory.toObject()
+        const newCategory = await this.categoryModel.create({
+            name: createCategoryDTO.name,
+            user: userId,
+        });
+        return newCategory.toObject();
     }
 
     async getAllUserCategories(userId: mongoose.Types.ObjectId) {
         const categories = await this.categoryModel
             .find({ user: userId })
             .select('-user -__v')
-            .lean()
-        return categories
+            .lean();
+        return categories;
     }
 
     async deleteCategory(categoryId: mongoose.Types.ObjectId, userId: string) {
         const category = await this.categoryModel
             .findOneAndDelete({ user: userId, _id: categoryId })
             .select('-user -__v')
-            .lean()
+            .lean();
 
         if (!category) {
-            throw new ConflictException('Category does not exist')
+            throw new ConflictException('Category does not exist');
         }
 
-        return category
+        return category;
     }
 
-    async updateCategoryName(categoryId: mongoose.Types.ObjectId, updateCategoryDTO: UpdateCategoryDTO, userId: mongoose.Types.ObjectId) {
+    async updateCategoryName(
+        categoryId: mongoose.Types.ObjectId,
+        updateCategoryDTO: UpdateCategoryDTO,
+        userId: mongoose.Types.ObjectId,
+    ) {
         const category = await this.categoryModel
-            .findOneAndUpdate({ _id: categoryId, user: userId }, updateCategoryDTO, { returnDocument: 'after' })
+            .findOneAndUpdate(
+                { _id: categoryId, user: userId },
+                updateCategoryDTO,
+                { returnDocument: 'after' },
+            )
             .select('-user -__v')
-            .lean()
+            .lean();
 
         if (!category) {
-            throw new ConflictException('Category does not exist')
+            throw new ConflictException('Category does not exist');
         }
 
-        return category
+        return category;
     }
 }

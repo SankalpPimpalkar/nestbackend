@@ -1,20 +1,20 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateIncomeDTO {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
         example: 'Salary',
-        required: true
+        required: true,
     })
-    source!: string
+    source!: string;
 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty({
         example: 40000,
-        required: true
+        required: true,
     })
-    amount!: number
+    amount!: number;
 }

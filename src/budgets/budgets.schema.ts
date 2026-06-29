@@ -9,11 +9,15 @@ export class Budget {
     amount!: number;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-    user!: mongoose.Types.ObjectId
+    user!: mongoose.Types.ObjectId;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true })
-    category!: mongoose.Types.ObjectId
+    @Prop({
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true,
+    })
+    category!: mongoose.Types.ObjectId;
 }
 
 export const BudgetSchema = SchemaFactory.createForClass(Budget);
-BudgetSchema.index({ user: 1, category: 1 }, { unique: true })
+BudgetSchema.index({ user: 1, category: 1 }, { unique: true });

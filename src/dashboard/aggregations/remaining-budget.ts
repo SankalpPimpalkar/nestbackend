@@ -1,11 +1,11 @@
-import mongoose, { Model } from "mongoose";
-import { Budget } from "src/budgets/budgets.schema";
+import mongoose, { Model } from 'mongoose';
+import { Budget } from 'src/budgets/budgets.schema';
 
 export default async function remainingBudgetAgreegation(
     budgetModel: Model<Budget>,
     userId: mongoose.Types.ObjectId,
     fromDate: Date,
-    toDate: Date
+    toDate: Date,
 ) {
     return await budgetModel.aggregate([
         { $match: { user: userId } },
@@ -13,19 +13,19 @@ export default async function remainingBudgetAgreegation(
             $lookup: {
                 from: 'expenses',
                 let: {
-                    category: "$category",
-                    user: "$user"
+                    category: '$category',
+                    user: '$user',
                 },
                 pipeline: [
                     {
                         $match: {
                             $expr: {
                                 $and: [
-                                    { $eq: ["$category", "$$category"] },
-                                    { $eq: ["$user", "$$user"] },
-                                    { $gte: ["$createdAt", fromDate] },
-                                    { $lte: ["$createdAt", toDate] }
-                                ]
+                                    { $eq: ['$category', '$$category'] },
+                                    { $eq: ['$user', '$$user'] },
+                                    { $gte: ['$createdAt', fromDate] },
+                                    { $lte: ['$createdAt', toDate] },
+                                ],
                             },
                         },
                     },
@@ -33,56 +33,59 @@ export default async function remainingBudgetAgreegation(
                         $group: {
                             _id: null,
                             totalExpense: {
-                                $sum: "$amount"
-                            }
-                        }
+                                $sum: '$amount',
+                            },
+                        },
                     },
                     {
                         $project: {
                             _id: 0,
-                            totalExpense: 1
-                        }
-                    }
+                            totalExpense: 1,
+                        },
+                    },
                 ],
-                as: "expenses"
-            }
+                as: 'expenses',
+            },
         },
         {
             $addFields: {
                 totalExpense: {
-                    $ifNull: [{ $arrayElemAt: ["$expenses.totalExpense", 0] }, 0]
-                }
-            }
+                    $ifNull: [
+                        { $arrayElemAt: ['$expenses.totalExpense', 0] },
+                        0,
+                    ],
+                },
+            },
         },
         {
             $addFields: {
                 remainingBudget: {
-                    $subtract: ["$amount", "$totalExpense"]
-                }
-            }
+                    $subtract: ['$amount', '$totalExpense'],
+                },
+            },
         },
         {
             $lookup: {
-                from: "categories",
-                localField: "category",
-                foreignField: "_id",
-                as: "category"
-            }
+                from: 'categories',
+                localField: 'category',
+                foreignField: '_id',
+                as: 'category',
+            },
         },
         {
-            $unwind: "$category"
+            $unwind: '$category',
         },
         {
             $project: {
                 _id: 0,
                 category: {
-                    _id: "$category._id",
-                    name: "$category.name"
+                    _id: '$category._id',
+                    name: '$category.name',
                 },
                 totalExpense: 1,
-                totalBudget: "$amount",
+                totalBudget: '$amount',
                 remainingBudget: 1,
-            }
-        }
-    ])
+            },
+        },
+    ]);
 }

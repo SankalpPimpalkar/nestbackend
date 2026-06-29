@@ -6,8 +6,13 @@ import { Category, CategorySchema } from './categories.schema';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [UsersModule, MongooseModule.forFeature([{ name: Category.name, schema: CategorySchema }])],
-  providers: [CategoriesService],
-  controllers: [CategoriesController]
+    imports: [
+        UsersModule,
+        MongooseModule.forFeature([
+            { name: Category.name, schema: CategorySchema },
+        ]),
+    ],
+    providers: [CategoriesService],
+    controllers: [CategoriesController],
 })
-export class CategoriesModule { }
+export class CategoriesModule {}

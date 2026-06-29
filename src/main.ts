@@ -6,7 +6,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-    app.setGlobalPrefix('api', { 'exclude': [{ path: '/', method: RequestMethod.GET }] })
+    app.setGlobalPrefix('api', {
+        exclude: [{ path: '/', method: RequestMethod.GET }],
+    });
     app.use(cookieParser());
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
@@ -15,8 +17,8 @@ async function bootstrap() {
         .addServer('http://localhost:3000', 'local')
         .build();
 
-    const documentFactory = () => SwaggerModule.createDocument(app, config)
-    SwaggerModule.setup('api', app, documentFactory)
+    const documentFactory = () => SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, documentFactory);
 
     await app.listen(process.env.PORT ?? 3000);
 }

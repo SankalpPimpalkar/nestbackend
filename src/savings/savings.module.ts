@@ -6,11 +6,13 @@ import { Saving, SavingSchema } from './savings.schema';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [
-    UsersModule,
-    MongooseModule.forFeature([{ name: Saving.name, schema: SavingSchema }])
-  ],
-  providers: [SavingsService],
-  controllers: [SavingsController]
+    imports: [
+        UsersModule,
+        MongooseModule.forFeature([
+            { name: Saving.name, schema: SavingSchema },
+        ]),
+    ],
+    providers: [SavingsService],
+    controllers: [SavingsController],
 })
-export class SavingsModule { }
+export class SavingsModule {}

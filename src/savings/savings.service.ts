@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Saving } from './savings.schema';
 import mongoose, { Model } from 'mongoose';
@@ -7,23 +11,23 @@ import { UpdateSavingDTO } from './dto/update-saving.dto';
 
 @Injectable()
 export class SavingsService {
-    constructor(
-        @InjectModel(Saving.name) private savingModel: Model<Saving>
-    ) { }
+    constructor(@InjectModel(Saving.name) private savingModel: Model<Saving>) {}
 
-    async createSaving(userId: mongoose.Types.ObjectId, createSavingDTO: CreateSavingDTO) {
-        const newSaving = await this.savingModel
-            .create({
-                user: userId,
-                ...createSavingDTO,
-                initialSavings: Number(createSavingDTO.initialSavings) || 0
-            })
+    async createSaving(
+        userId: mongoose.Types.ObjectId,
+        createSavingDTO: CreateSavingDTO,
+    ) {
+        const newSaving = await this.savingModel.create({
+            user: userId,
+            ...createSavingDTO,
+            initialSavings: Number(createSavingDTO.initialSavings) || 0,
+        });
 
         if (!newSaving) {
-            throw new ConflictException("Failed to add Saving")
+            throw new ConflictException('Failed to add Saving');
         }
 
-        return newSaving.toObject()
+        return newSaving.toObject();
     }
 
     async getAllSavings(userId: mongoose.Types.ObjectId) {
@@ -38,23 +42,23 @@ export class SavingsService {
                             $match: {
                                 $expr: {
                                     $and: [
-                                        { $eq: ["$user", "$$user"] },
-                                        { $gte: ["$createdAt", "$$rootDate"] }
-                                    ]
-                                }
-                            }
+                                        { $eq: ['$user', '$$user'] },
+                                        { $gte: ['$createdAt', '$$rootDate'] },
+                                    ],
+                                },
+                            },
                         },
                         {
                             $group: {
                                 _id: null,
                                 totalIncome: {
-                                    $sum: '$amount'
-                                }
-                            }
-                        }
+                                    $sum: '$amount',
+                                },
+                            },
+                        },
                     ],
-                    as: 'incomes'
-                }
+                    as: 'incomes',
+                },
             },
             {
                 $lookup: {
@@ -65,23 +69,23 @@ export class SavingsService {
                             $match: {
                                 $expr: {
                                     $and: [
-                                        { $eq: ["$user", "$$user"] },
-                                        { $gte: ["$createdAt", "$$rootDate"] }
-                                    ]
-                                }
-                            }
+                                        { $eq: ['$user', '$$user'] },
+                                        { $gte: ['$createdAt', '$$rootDate'] },
+                                    ],
+                                },
+                            },
                         },
                         {
                             $group: {
                                 _id: null,
                                 totalExpense: {
-                                    $sum: '$amount'
-                                }
-                            }
-                        }
+                                    $sum: '$amount',
+                                },
+                            },
+                        },
                     ],
-                    as: 'expenses'
-                }
+                    as: 'expenses',
+                },
             },
             {
                 $project: {
@@ -89,28 +93,34 @@ export class SavingsService {
                     initialSavings: 1,
                     goal: 1,
                     totalIncome: {
-                        $ifNull: [{ $arrayElemAt: ["$incomes.totalIncome", 0] }, 0]
+                        $ifNull: [
+                            { $arrayElemAt: ['$incomes.totalIncome', 0] },
+                            0,
+                        ],
                     },
                     totalExpense: {
-                        $ifNull: [{ $arrayElemAt: ["$expenses.totalExpense", 0] }, 0]
-                    }
-                }
+                        $ifNull: [
+                            { $arrayElemAt: ['$expenses.totalExpense', 0] },
+                            0,
+                        ],
+                    },
+                },
             },
             {
                 $addFields: {
                     totalSavings: {
                         $add: [
-                            { $subtract: ["$totalIncome", "$totalExpense"] },
-                            "$initialSavings"
-                        ]
-                    }
-                }
+                            { $subtract: ['$totalIncome', '$totalExpense'] },
+                            '$initialSavings',
+                        ],
+                    },
+                },
             },
             {
                 $addFields: {
                     progress: {
                         $cond: {
-                            if: { $eq: ["$goal", 0] },
+                            if: { $eq: ['$goal', 0] },
                             then: 0,
                             else: {
                                 $max: [
@@ -120,22 +130,27 @@ export class SavingsService {
                                             100,
                                             {
                                                 $multiply: [
-                                                    { $divide: ["$totalSavings", "$goal"] },
-                                                    100
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
+                                                    {
+                                                        $divide: [
+                                                            '$totalSavings',
+                                                            '$goal',
+                                                        ],
+                                                    },
+                                                    100,
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
             },
             {
                 $sort: {
-                    progress: -1
-                }
+                    progress: -1,
+                },
             },
             {
                 $project: {
@@ -145,46 +160,48 @@ export class SavingsService {
                     goal: 1,
                     totalSavings: 1,
                     progress: {
-                        $trunc: ["$progress", 2]
-                    }
-                }
-            }
-        ])
-        return savings
+                        $trunc: ['$progress', 2],
+                    },
+                },
+            },
+        ]);
+        return savings;
     }
 
     async updateSaving(
         userId: mongoose.Types.ObjectId,
         savingsId: mongoose.Types.ObjectId,
-        updateSavingDTO: UpdateSavingDTO
+        updateSavingDTO: UpdateSavingDTO,
     ) {
-        const updatedSaving = await this.savingModel
-            .findOneAndUpdate({
+        const updatedSaving = await this.savingModel.findOneAndUpdate(
+            {
                 _id: savingsId,
-                user: userId
-            }, updateSavingDTO, { returnDocument: 'after' })
+                user: userId,
+            },
+            updateSavingDTO,
+            { returnDocument: 'after' },
+        );
 
         if (!updateSavingDTO) {
-            throw new NotFoundException('Saving not found')
+            throw new NotFoundException('Saving not found');
         }
 
-        return updatedSaving
+        return updatedSaving;
     }
 
     async deleteSaving(
         userId: mongoose.Types.ObjectId,
-        savingsId: mongoose.Types.ObjectId
+        savingsId: mongoose.Types.ObjectId,
     ) {
-        const deletedSaving = await this.savingModel
-            .findOneAndDelete({
-                _id: savingsId,
-                user: userId
-            })
+        const deletedSaving = await this.savingModel.findOneAndDelete({
+            _id: savingsId,
+            user: userId,
+        });
 
         if (!deletedSaving) {
-            throw new NotFoundException('Saving not found')
+            throw new NotFoundException('Saving not found');
         }
 
-        return deletedSaving
+        return deletedSaving;
     }
 }

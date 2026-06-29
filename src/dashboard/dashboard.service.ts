@@ -19,31 +19,50 @@ export class DashboardService {
         @InjectModel(Category.name) private categoryModel: Model<Category>,
         @InjectModel(Expense.name) private expenseModel: Model<Expense>,
         @InjectModel(Income.name) private incomeModel: Model<Income>,
-    ) { }
+    ) {}
 
-    async getDashboardData(userId: mongoose.Types.ObjectId, from?: Date, to?: Date) {
-        const now = new Date()
-        const fromDate = from ? new Date(from) : new Date(now.getFullYear(), now.getMonth(), 1)
-        const toDate = to ? new Date(to) : new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+    async getDashboardData(
+        userId: mongoose.Types.ObjectId,
+        from?: Date,
+        to?: Date,
+    ) {
+        const now = new Date();
+        const fromDate = from
+            ? new Date(from)
+            : new Date(now.getFullYear(), now.getMonth(), 1);
+        const toDate = to
+            ? new Date(to)
+            : new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
         const [
             totalIncome,
             totalExpense,
             budgetConsumptions,
-            topSpendingCategories
+            topSpendingCategories,
         ] = await Promise.all([
             totalIncomeAgreegation(this.incomeModel, userId, fromDate, toDate),
-            totalExpenseAgreegation(this.expenseModel, userId, fromDate, toDate),
-            remainingBudgetAgreegation(this.budgetModel, userId, fromDate, toDate),
-            topSpendingCategoriesAgreegation(this.expenseModel, userId)
-        ])
+            totalExpenseAgreegation(
+                this.expenseModel,
+                userId,
+                fromDate,
+                toDate,
+            ),
+            remainingBudgetAgreegation(
+                this.budgetModel,
+                userId,
+                fromDate,
+                toDate,
+            ),
+            topSpendingCategoriesAgreegation(this.expenseModel, userId),
+        ]);
 
         return {
             totalIncome: totalIncome[0]?.total || 0,
             totalExpense: totalExpense[0]?.total || 0,
             budgetConsumptions: budgetConsumptions,
-            remainingBalance: (totalIncome[0]?.total || 0) - (totalExpense[0]?.total || 0),
-            topSpendingCategories: topSpendingCategories
-        }
+            remainingBalance:
+                (totalIncome[0]?.total || 0) - (totalExpense[0]?.total || 0),
+            topSpendingCategories: topSpendingCategories,
+        };
     }
 }

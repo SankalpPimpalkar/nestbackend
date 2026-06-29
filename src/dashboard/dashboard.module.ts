@@ -10,17 +10,17 @@ import { DashboardController } from './dashboard.controller';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [
-    UsersModule,
-    MongooseModule.forFeature([
-      { name: User.name, schema: UserSchema },
-      { name: Budget.name, schema: BudgetSchema },
-      { name: Category.name, schema: CategorySchema },
-      { name: Expense.name, schema: ExpenseSchema },
-      { name: Income.name, schema: IncomeSchema },
-    ]),
-  ],
-  providers: [DashboardService],
-  controllers: [DashboardController]
+    imports: [
+        UsersModule,
+        MongooseModule.forFeature([
+            { name: User.name, schema: UserSchema },
+            { name: Budget.name, schema: BudgetSchema },
+            { name: Category.name, schema: CategorySchema },
+            { name: Expense.name, schema: ExpenseSchema },
+            { name: Income.name, schema: IncomeSchema },
+        ]),
+    ],
+    providers: [DashboardService],
+    controllers: [DashboardController],
 })
-export class DashboardModule { }
+export class DashboardModule {}

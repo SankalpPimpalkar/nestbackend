@@ -6,8 +6,13 @@ import { Budget, BudgetSchema } from './budgets.schema';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [UsersModule, MongooseModule.forFeature([{ name: Budget.name, schema: BudgetSchema }])],
-  controllers: [BudgetsController],
-  providers: [BudgetsService]
+    imports: [
+        UsersModule,
+        MongooseModule.forFeature([
+            { name: Budget.name, schema: BudgetSchema },
+        ]),
+    ],
+    controllers: [BudgetsController],
+    providers: [BudgetsService],
 })
-export class BudgetsModule { }
+export class BudgetsModule {}

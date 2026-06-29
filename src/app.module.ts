@@ -19,16 +19,16 @@ import { SavingsModule } from './savings/savings.module';
 @Module({
     imports: [
         ThrottlerModule.forRoot({
-            throttlers: [
-                { ttl: 60000, limit: 10 }
-            ]
+            throttlers: [{ ttl: 60000, limit: 10 }],
         }),
         ConfigModule.forRoot({ isGlobal: true }),
-        MongooseModule.forRoot(process.env.MONGO_URI as string, { dbName: 'nestbackend' }),
+        MongooseModule.forRoot(process.env.MONGO_URI as string, {
+            dbName: 'nestbackend',
+        }),
         JwtModule.register({
             global: true,
             secret: process.env.JWT_SECRET,
-            signOptions: { expiresIn: '1d' },
+            signOptions: { expiresIn: '1d' }
         }),
         AuthModule,
         UsersModule,
@@ -37,7 +37,7 @@ import { SavingsModule } from './savings/savings.module';
         BudgetsModule,
         ExpensesModule,
         DashboardModule,
-        SavingsModule
+        SavingsModule,
     ],
     controllers: [AppController],
     providers: [
@@ -46,4 +46,4 @@ import { SavingsModule } from './savings/savings.module';
         { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
     ],
 })
-export class AppModule { }
+export class AppModule {}

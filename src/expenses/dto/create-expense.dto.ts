@@ -1,29 +1,29 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { IsNotEmpty, IsNumber, IsString } from "class-validator"
-import mongoose from "mongoose"
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import mongoose from 'mongoose';
 
 export class CreateExpenseDTO {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
         example: 'Pizza',
-        required: true
+        required: true,
     })
-    title!: string
+    title!: string;
 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty({
         example: 150,
-        required: true
+        required: true,
     })
-    amount!: number
+    amount!: number;
 
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
         example: '6a3cc24b01026e1b7222fbe8',
-        required: true
+        required: true,
     })
-    category!: mongoose.Types.ObjectId
+    category!: mongoose.Types.ObjectId;
 }

@@ -4,13 +4,11 @@ import ResponseHandler from './common/utils/ResponseHandler';
 
 @Controller()
 export class AppController {
-    constructor(
-        private readonly appService: AppService,
-    ) { }
+    constructor(private readonly appService: AppService) {}
 
     @Get('')
     getHello() {
         const message = this.appService.getHello();
-        return ResponseHandler(HttpStatus.OK, message)
+        return ResponseHandler(HttpStatus.OK, message);
     }
 }
