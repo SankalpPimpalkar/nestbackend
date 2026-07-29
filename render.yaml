@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: nestbackend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000

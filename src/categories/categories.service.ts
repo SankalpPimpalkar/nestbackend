@@ -11,7 +11,10 @@ export class CategoriesService {
         @InjectModel(Category.name) private categoryModel: Model<Category>,
     ) {}
 
-    async createCategory(createCategoryDTO: CreateCategoryDTO, userId: string) {
+    async createCategory(
+        createCategoryDTO: CreateCategoryDTO,
+        userId: mongoose.Types.ObjectId,
+    ) {
         console.log(createCategoryDTO, userId);
         const existingCategory = await this.categoryModel.findOne({
             name: createCategoryDTO.name,

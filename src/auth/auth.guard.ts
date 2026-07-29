@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
     constructor(
         private readonly jwtService: JwtService,
         private readonly userService: UsersService,
-    ) { }
+    ) {}
 
     private extractTokenFromHeader(request: Request): string | undefined {
         const [type, token] = request.headers.authorization?.split(' ') ?? [];
@@ -22,7 +22,9 @@ export class AuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request: Request = context.switchToHttp().getRequest();
-        const token = request.cookies['access_token'] || this.extractTokenFromHeader(request)
+        const token =
+            request.cookies['access_token'] ||
+            this.extractTokenFromHeader(request);
 
         if (!token) {
             throw new UnauthorizedException('Token not found');

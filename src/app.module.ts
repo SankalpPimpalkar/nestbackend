@@ -15,6 +15,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SavingsModule } from './savings/savings.module';
+import { McpModule } from './mcp/mcp.module';
 
 @Module({
     imports: [
@@ -28,7 +29,7 @@ import { SavingsModule } from './savings/savings.module';
         JwtModule.register({
             global: true,
             secret: process.env.JWT_SECRET,
-            signOptions: { expiresIn: '1d' }
+            signOptions: { expiresIn: '1d' },
         }),
         AuthModule,
         UsersModule,
@@ -38,6 +39,7 @@ import { SavingsModule } from './savings/savings.module';
         ExpensesModule,
         DashboardModule,
         SavingsModule,
+        McpModule,
     ],
     controllers: [AppController],
     providers: [
